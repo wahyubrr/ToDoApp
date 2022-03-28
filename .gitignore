@@ -1,0 +1,5 @@
+node_modules
+tododb-volume
+
+.env
+db-model.xlsx
