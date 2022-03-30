@@ -10,7 +10,6 @@ app.use(cors());
 app.use(express.json());
 
 var mysql = require('mysql');
-const { query } = require('express');
 
 function queryDatabase(query) {
   return new Promise((resolve, reject) => {
@@ -41,60 +40,10 @@ function authenticateToken(req, res, next) {
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403)
-    req.user = user
+    req.user = user.userid
     next()
   })
 }
-
-app.post('/registration', async (req, res) => {
-  // Crete user with hashed password by bcrypt
-  try {
-    const userid = req.body.userid.toLowerCase()
-    let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
-      userid + "') AS useridAvailable"
-    const useridAvailable = await queryDatabase(query)
-    // console.log(useridAvailable[0].useridAvailable)
-    if(useridAvailable[0].useridAvailable) {
-      return res.status(200).send("UserID is taken")
-    }
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    query = "INSERT INTO users ( userid, lastname, firstname, password ) " +
-      "VALUES ( '" + userid + "', '" +
-      req.body.lastname + "', '" +
-      req.body.firstname + "', '" +
-      hashedPassword + "')";
-    queryDatabase(query)
-      .then(
-        res.status(201).send("Success inputting user")
-      )
-      .catch(
-        err => res.status(400).send(err)
-      );
-  } catch {
-    res.status(500).send("Query failed")
-  }
-})
-
-app.post('/login', async (req, res) => {
-  // Authenticate User with hashed password by bcrypt
-  try {
-    let query = "SELECT userid, password FROM users WHERE userid='" + req.body.userid + "'"
-    let result = await queryDatabase(query)
-    if (result[0] == null) {
-      return res.status(200).send("User not found")
-    }
-    if (await bcrypt.compare(req.body.password, result[0].password)) {
-      let accessToken = jwt.sign(req.body.userid, process.env.ACCESS_TOKEN_SECRET)
-      return res.json({ accessToken: accessToken })
-      // return res.status(200).send("Log-in success!")
-    } else {
-      return res.status(200).send("Password did not match!")
-    }
-  }
-  catch {
-    res.status(500).send("Internal server error")
-  }
-})
 
 app.get('/user', (req, res) => {
   queryDatabase("SELECT * FROM users")
@@ -187,29 +136,25 @@ app.post('/todo/add', authenticateToken, async (req, res) => {
   }
 })
 
-// app.post('/todo/delete', authenticateToken, async (req, res) => {
-//   try {
-//     let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
-//       req.user + "') AS useridExist"
-//     const useridOnDatabase = await queryDatabase(query)
+app.delete('/todo/delete', authenticateToken, async (req, res) => {
+  try {
+    let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
+      req.user + "') AS useridExist"
+    const useridOnDatabase = await queryDatabase(query)
     
-//     if (useridOnDatabase[0].useridExist) {
-//       const today = new Date().toISOString().slice(0, 10)
-//       query = "INSERT INTO todolist " +
-//       "( userid, dateassigned, descriptions, completed ) " +
-//       "VALUES('" + req.user + "', '" + today + "', " + mysql.escape(req.body.descriptions) + 
-//       ", " + mysql.escape(req.body.completed) + ")"
-//       const queriedData = await queryDatabase(query)
-//       res.sendStatus(200)
-//     }
-//     else {
-//       res.sendStatus(403)
-//     }
-//   }
-//   catch {
-//     res.sendStatus(500)
-//   }
-// })
+    if (useridOnDatabase[0].useridExist) {
+      query = "DELETE FROM todolist WHERE userid='" + mysql.escape(req.body.todoid) + "'"
+      await queryDatabase(query)
+      res.sendStatus(200)
+    }
+    else {
+      res.sendStatus(403)
+    }
+  }
+  catch {
+    res.sendStatus(500)
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
