@@ -142,7 +142,8 @@ app.delete('/todo/delete', authenticateToken, async (req, res) => {
     let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
       req.user + "') AS useridExist"
     const useridOnDatabase = await queryDatabase(query)
-    
+    // Need to check the username == token
+    // Welppp it's not working yet lul
     if (useridOnDatabase[0].useridExist) {
       query = "DELETE FROM todolist WHERE userid='" + mysql.escape(req.body.todoid) + "'"
       await queryDatabase(query)
