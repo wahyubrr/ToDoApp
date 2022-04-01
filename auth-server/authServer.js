@@ -117,7 +117,7 @@ app.delete('/logout', async (req, res) => {
   try {
     const query = "DELETE FROM refreshtokentable WHERE refreshtoken='" + req.body.token + "'"
     await queryDatabase(query)
-    res.sendStatus(204)
+    res.sendStatus(200)
   }
   catch {
     res.sendStatus(500)
