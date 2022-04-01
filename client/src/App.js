@@ -1,18 +1,15 @@
 import { Link, Outlet } from "react-router-dom";
+import "./App.css";
 
 export default function App() {
   return (
     <div>
-      <h1>To Do App!</h1>
-      <nav
-        style={{
-          borderBottom: "solid 1px",
-          paddingBottom: "1rem"
-        }}
-      >
-        <Link to="/users">Users</Link> | {" "}
-        <Link to ="/about">About</Link>
+      <Link to="/" className="nav-button"><h1>To Do App!</h1></Link>
+      <nav className="navbar">
+        <Link to="/users" className="nav-button">Users</Link> | {" "}
+        <Link to ="/about" className="nav-button">About</Link>
       </nav>
+      <h2>weee</h2>
       <Outlet />
     </div>
   );
