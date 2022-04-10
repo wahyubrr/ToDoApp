@@ -10,22 +10,26 @@ class Users extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("http://localhost:4000")
+    axios.get("http://localhost:8080/user")
       .then(res => {
         const users = res.data;
         this.setState({ users });
-        console.log(users);
       })
   }
 
   render() {
     return (
-      <div style={{ padding: "1rem 0" }}>
+      <div style={{ padding: "1rem 40px" }}>
         <h2>Users</h2>
-        {this.state.users.map((userid, descriptions) => {
-          // {userid}
-          // {descriptions}
-        })}
+        <ul>
+          {this.state.users.map(user => {
+            return (
+              <li key={"Users"+user.UserId}>
+                {user.UserId} - {user.FirstName} {user.LastName}
+              </li>
+            )
+          })}
+        </ul>
       </div>
     );
   }

@@ -4,6 +4,7 @@
   "description": "Authentication server",
   "main": "authServer.js",
   "scripts": {
+    "start": "node authServer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Wahyu Berlianto wahyubrlianto@gmail.com",

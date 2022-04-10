@@ -64,7 +64,7 @@ app.post('/registration', async (req, res) => {
     const useridAvailable = await queryDatabase(query)
     // console.log(useridAvailable[0].useridAvailable)
     if(useridAvailable[0].useridAvailable) {
-      return res.status(200).send("UserID is taken")
+      return res.status(401).send("UserID is taken")
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     query = "INSERT INTO users ( userid, lastname, firstname, password ) " +
@@ -74,7 +74,7 @@ app.post('/registration', async (req, res) => {
       hashedPassword + "')";
     queryDatabase(query)
       .then(
-        res.status(201).send("Success inputting user")
+        res.status(201).send("Account created!")
       )
       .catch(
         err => res.status(400).send(err)
@@ -90,7 +90,7 @@ app.post('/login', async (req, res) => {
     let query = "SELECT userid, password FROM users WHERE userid='" + req.body.userid + "'"
     let result = await queryDatabase(query)
     if (result[0] == null) {
-      return res.status(200).send("User not found")
+      return res.status(401).send("User not found")
     }
     if (await bcrypt.compare(req.body.password, result[0].password)) {
       const accessToken = generateAccessToken(req.body.userid)
@@ -103,7 +103,7 @@ app.post('/login', async (req, res) => {
       return res.json({ accessToken: accessToken, refreshToken: refreshToken })
       // return res.status(200).send("Log-in success!")
     } else {
-      return res.status(403).send("Password did not match!")
+      return res.status(401).send("Password did not match!")
     }
   }
   catch (err) {

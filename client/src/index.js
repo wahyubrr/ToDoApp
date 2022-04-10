@@ -3,28 +3,37 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import './index.css';
 import App from './App';
+import Home from './routes/home'
+import Login from './routes/login'
+import Registration from './routes/registration'
 import Users from './routes/users';
 import About from './routes/about';
 import reportWebVitals from './reportWebVitals';
+import store from './app/store'
+import { Provider } from 'react-redux'
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App/>}>
-        <Route path="users" element={<Users/>} />
-          <Route path=":userId" element={<Users/>} />
-        <Route path="about" element={<About/>} />
-        <Route
-          path="*"
-          element={
-            <main style={{ padding: "1rem" }}>
-              <p>404 - There is nothing here!</p>
-            </main>
-          }
-        />
-      </Route>
-    </Routes>
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<App />}>
+          <Route path='/' element={<Home />} />
+          <Route path='users' element={<Users />} />
+          <Route path='about' element={<About />} />
+          <Route
+            path="*"
+            element={
+              <main style={{ padding: "1rem" }}>
+                <p>404 - There is nothing here!</p>
+              </main>
+            }
+          />
+        </Route>
+        <Route path='/login' element={<Login />}/>
+        <Route path='/registration' element={<Registration />}/>
+      </Routes>
+    </BrowserRouter>
+  </Provider>,
   document.getElementById('root')
 );
 
