@@ -8,6 +8,7 @@ import Login from './routes/login'
 import Registration from './routes/registration'
 import Users from './routes/users';
 import About from './routes/about';
+import Account from './routes/account'
 import reportWebVitals from './reportWebVitals';
 import store from './app/store'
 import { Provider } from 'react-redux'
@@ -20,6 +21,7 @@ ReactDOM.render(
           <Route path='/' element={<Home />} />
           <Route path='users' element={<Users />} />
           <Route path='about' element={<About />} />
+          <Route path='account' element={<Account />} />
           <Route
             path="*"
             element={

@@ -6,14 +6,15 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import CircularProgress from '@mui/material/CircularProgress'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function Copyright(props) {
@@ -33,22 +34,29 @@ const theme = createTheme();
 
 export default function SignUp() {
   const [redirect, setRedirect] = useState(false)
+  const [error, setError] = useState("")
+  const [signupButton, setSignupButton] = useState("Sign Up")
 
   const redirectNow = () => {
     setRedirect(true)
   }
 
   const handleSubmit = (event) => {
+    setSignupButton(<CircularProgress color="inherit" size="1.55rem"/>)
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     if ( data.get('firstName') === "" ) {
-      alert("First Name is empty!")
+      setSignupButton("Sign Up")
+      setError("First Name is empty.")
     } else if ( data.get('lastName') === "" ) {
-      alert("Last Name is empty!")
+      setSignupButton("Sign Up")
+      setError("Last Name is empty.")
     } else if ( data.get('username') === "" ) {
-      alert("Username is empty!")
+      setSignupButton("Sign Up")
+      setError("Username is empty.")
     } else if ( data.get('password') === "" ) {
-      alert("Password is empty!")
+      setSignupButton("Sign Up")
+      setError("Password is empty.")
     } else {
       const query = {
         firstname: data.get('firstName'),
@@ -58,15 +66,16 @@ export default function SignUp() {
       }
       axios.post("http://localhost:8081/registration", query)
       .then((response) => {
-        alert(response.data)
+        setError(response.data)
         if (response.status === 201) {
           // this.setState({ redirect: true })
+          setError("")
           redirectNow()
         }
       })
       .catch((error) => {
-        alert("Username is taken")
-        console.log(error)
+        setSignupButton("Sign Up")
+        setError("Sorry, username is taken.")
       })
     }
   };
@@ -133,12 +142,11 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
-              {/* <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails"color="primary" />}
-                  label="I want to receive inspiration, marketingpromotions and updates via email."
-                />
-              </Grid> */}
+              <Grid item xs={12}>
+                <Typography component="p" variant="p" style={{fontSize:'1.05em', color: 'red', textAlign: 'center'}}>
+                  {error}
+                </Typography>
+              </Grid>
             </Grid>
             <Button
               type="submit"
@@ -146,7 +154,7 @@ export default function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              {signupButton}
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>

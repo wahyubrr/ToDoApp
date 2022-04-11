@@ -14,9 +14,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CircularProgress from '@mui/material/CircularProgress'
 import axios from 'axios'
 import { userSelector, useDispatch, useSelector } from 'react-redux'
-import { signingIn, signingOut, setToken } from '../features/auth/authSlice'
+import { signingIn, setToken } from '../features/auth/authSlice'
+import { setUsername } from '../features/user/userSlice'
 
 function Copyright(props) {
   return (
@@ -36,8 +38,12 @@ const theme = createTheme();
 export default function SignIn() {
   const signed = useSelector(state => state.auth.signed)
   const dispatch = useDispatch()
-
+  
+  const [signinButton, setSigninButton] = useState("Sign In")
+  const [error, setError] = useState("")
+  
   const handleSubmit = (event) => {
+    setSigninButton(<CircularProgress color="inherit" size="1.55rem"/>)
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     axios.post('http://localhost:8081/login', {
@@ -48,10 +54,14 @@ export default function SignIn() {
       dispatch(setToken(response.data.accessToken))
     })
     .then(() => {
+      dispatch(setUsername(data.get('username')))
+    })
+    .then(() => {
       dispatch(signingIn())
     })
     .catch(function (error) {
-      alert("Incorrect username or password")
+      setError("Incorrect username or password")
+      setSigninButton("Sign In")
       console.log(error)
     })
   };
@@ -99,13 +109,16 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
+            <Typography component="p" variant="p" style={{fontSize:'1.05em', color: 'red', textAlign: 'center', paddingTop: '10px'}}>
+              {error}
+            </Typography>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              {signinButton}
             </Button>
             <Grid container>
               <Grid item xs>

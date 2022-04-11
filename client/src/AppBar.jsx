@@ -12,6 +12,9 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
+import { userSelector, useDispatch, useSelector } from 'react-redux'
+import { signingIn, signingOut, setToken } from './features/auth/authSlice'
+import { setUsername, setFirstName } from './features/user/userSlice'
 import { Link } from "react-router-dom";
 import "./AppBar.css";
 
@@ -23,11 +26,15 @@ const pagesWhite = [
   <Link key={"users2"} to="/users" className="nav-button-white">Users</Link>,
   <Link key={"about2"} to ="/about" className="nav-button-white">About</Link>
 ];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = [
+  <Link key={"setting-account"} to ="/account" className="nav-button-black">Account</Link>
+  , 'Logout'];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const username = useSelector(state => state.user.username)
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -116,7 +123,7 @@ const ResponsiveAppBar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={username.toUpperCase()} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu
