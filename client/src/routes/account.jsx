@@ -18,7 +18,11 @@ import { signingIn, signingOut, setToken } from '../features/auth/authSlice'
 import { setUsername, setFirstName } from '../features/user/userSlice'
 
 function Account() {
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState([{
+    "UserId": "",
+    "FirstName": "",
+    "LastName": ""
+  }])
   const token = useSelector(state => state.auth.token)
   const userState = useSelector(state => state.user.username)
   const dispatch = useDispatch()
@@ -30,7 +34,7 @@ function Account() {
   useEffect(() => {
     axios.get("http://localhost:8080/user/" + userState)
       .then(res => {
-        console.log(users) // DEBUGGING
+        // console.log(users) // DEBUGGING
         setUsers(res.data)
       })
   }, [])
