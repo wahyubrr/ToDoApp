@@ -25,6 +25,7 @@ function queryDatabase(query) {
       if (err) throw err;
       con.query(query, function (err, result, fields) {
         if (err) {
+          // console.log(err) // DEBUGGING
           reject(err);
           return
         }
@@ -37,6 +38,7 @@ function queryDatabase(query) {
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
+  // console.log(req.headers) // DEBUGGING
   if (token == null) return res.sendStatus(401)
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -125,7 +127,7 @@ app.post('/todo/add', authenticateToken, async (req, res) => {
       "( userid, dateassigned, descriptions, completed ) " +
       "VALUES('" + req.user + "', '" + today + "', " + mysql.escape(req.body.descriptions) + 
       ", " + mysql.escape(req.body.completed) + ")"
-      const queriedData = await queryDatabase(query)
+      await queryDatabase(query)
       res.sendStatus(200)
     }
     else {
@@ -145,7 +147,7 @@ app.delete('/todo/delete', authenticateToken, async (req, res) => {
     // Need to check the username == token
     // Welppp it's not working yet lul
     if (useridOnDatabase[0].useridExist) {
-      query = "DELETE FROM todolist WHERE userid='" + mysql.escape(req.body.todoid) + "'"
+      query = "DELETE FROM todolist WHERE todoid='" + mysql.escape(req.body.todoid) + "'"
       await queryDatabase(query)
       res.sendStatus(200)
     }

@@ -96,10 +96,14 @@ app.post('/login', async (req, res) => {
       const accessToken = generateAccessToken(req.body.userid)
       const refreshToken = jwt.sign(req.body.userid, process.env.REFRESH_TOKEN_SECRET)
 
-      query = "INSERT INTO refreshtokentable (refreshtoken) VALUES ('" +
+      let query = "SELECT EXISTS (SELECT refreshtoken FROM  refreshtokentable WHERE refreshtoken='" + refreshToken + "') AS refreshTokenExist"
+      const refreshTokenExist = await queryDatabase(query)
+      if (!refreshTokenExist[0].refreshTokenExist) {
+        query = "INSERT INTO refreshtokentable (refreshtoken) VALUES ('" +
         refreshToken + "')"
-      await queryDatabase(query)
-      
+        await queryDatabase(query)
+      }
+
       return res.json({ accessToken: accessToken, refreshToken: refreshToken })
       // return res.status(200).send("Log-in success!")
     } else {

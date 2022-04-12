@@ -1,23 +1,53 @@
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import IconButton from '@mui/material/IconButton';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
+import { alpha } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';
+import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { userSelector, useDispatch, useSelector } from 'react-redux'
 import { signingIn, signingOut, setToken } from '../features/auth/authSlice'
 
-function Users() {
+function generate(element) {
+  return [0, 1, 2].map((value) =>
+    React.cloneElement(element, {
+      key: value,
+    }),
+  );
+}
+
+const Demo = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+}));
+
+function Home() {
   const [todo, setTodo] = useState([""])
+  const [description, setDescription] = useState("")
+  const [placeholder, setPlaceholder] = useState("Add todo here")
+  const [updateState, setUpdate] = useState(false)
   
   const token = useSelector(state => state.auth.token)
   const dispatch = useDispatch()
-
-  const handlingAdd = (data) => {
-    console.log(data)
-  }
 
   useEffect(() => {
     axios.get("http://localhost:8080/todo", {
       headers: {
         "content-type": "application/json",
-        "Authorization": "Bearer " + token,
+        "Authorization": "Bearer " + token
       }
     })
     .then(res => {
@@ -27,27 +57,156 @@ function Users() {
     .catch(err => {
       console.log(err)
     })
-  }, [])
+  }, [updateState])
+
+  const handleTodoChange = (e) => {
+    setDescription(e.target.value)
+  }
+
+  const updateUi = () => {
+    if (updateState == true) {
+      setUpdate(false)
+    } else {
+      setUpdate(true)
+    }
+  }
+
+  const handleAddTodo = () => {
+    const auth = {
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer " + token
+      }
+    }
+    const body = {
+      "descriptions": description,
+      "completed": "0"
+    }
+    if (description) {
+      axios.post("http://localhost:8080/todo/add", body, auth)
+      .then(res => {
+        console.log(res.data)
+        setDescription("")
+        updateUi()
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+    else {
+      if (placeholder == "Add todo here") {
+        setPlaceholder("Add todo first")
+      } else {
+        setPlaceholder("Add todo here")
+      }
+    }
+  }
+  
+  const handleDelete = (todoid) => {
+    const request = {
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      data: {
+        "todoid": todoid
+      }
+    }
+    axios.delete("http://localhost:8080/todo/delete", request)
+    .then(res => {
+      console.log(res.data)
+      updateUi()
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
 
   return (
-    <div style={{ padding: "1rem 40px" }}>
-      <h2>Home</h2>
-      <ul>
-        {todo.map(todo => {
-          return (
-            <li key={todo.TodoId}>
-              {todo.Descriptions}
-              <button>Delete</button>
-            </li>
-          )
-        })}
-      </ul>
-      <div>
-        <input required type="text" id="descriptions" label='descriptions' name='descriptions'/>
-        <button id="descriptions" value='add' onClick={handlingAdd}>Add Todo</button>
-      </div>
-    </div>
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} md={5} >
+          <Typography sx={{ mt: 4, mb: 2 }} variant="h5" component="div">
+            Home
+          </Typography>
+          <Demo>
+            <List dense={false}>
+              {todo.map(todo => {
+                return (
+                  <Paper elevation={1}>
+                  <ListItem key={"todo-"+todo.TodoId}
+                    style={{ marginBottom: 5 }}
+                    secondaryAction={
+                      <div>
+                      <IconButton edge="end" aria-label="edit"
+                        // onClick={() => handleDelete(todo.TodoId)}
+                      >
+                        <EditIcon />
+                      </IconButton><IconButton edge="end" aria-label="delete"
+                        onClick={() => handleDelete(todo.TodoId)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                      </div>
+                    }
+                  >
+                    <ListItemText
+                      primary={todo.Descriptions}
+                    />
+                  </ListItem>
+                  </Paper>
+                )
+              })}
+            </List>
+            <RedditTextField
+              label="Add todos here"
+              id="descriptions"
+              variant="filled"
+              fullWidth
+              value={description}
+              placeholder={placeholder}
+              style={{ marginTop: 11, marginLeft: 16, maxWidth: '85%' }}
+              onChange={(e) => handleTodoChange(e)}
+              onSubmit={handleAddTodo}
+            />
+            <Button
+              id="descriptions"
+              value='add'
+              variant="contained"
+              onClick={handleAddTodo}
+              style={{ marginTop: 11, marginLeft: 16 }}
+            >
+              Add Todo
+            </Button>
+          </Demo>
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
 
-export default Users;
+export default Home;
+
+const RedditTextField = styled((props) => (
+  <TextField InputProps={{ disableUnderline: true }} {...props} />
+))(({ theme }) => ({
+  '& .MuiFilledInput-root': {
+    border: '1px solid #e2e2e1',
+    overflow: 'hidden',
+    borderRadius: 4,
+    backgroundColor: theme.palette.mode === 'light' ? '#fcfcfb' : '#2b2b2b',
+    transition: theme.transitions.create([
+      'border-color',
+      'background-color',
+      'box-shadow',
+    ]),
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+    '&.Mui-focused': {
+      backgroundColor: 'transparent',
+      boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
+      borderColor: theme.palette.primary.main,
+    },
+  },
+}));

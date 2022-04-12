@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Navigate } from "react-router-dom";
+import { Navigate, resolvePath } from "react-router-dom";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,7 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress'
 import axios from 'axios'
 import { userSelector, useDispatch, useSelector } from 'react-redux'
-import { signingIn, setToken } from '../features/auth/authSlice'
+import { signingIn, setToken, setRefreshToken } from '../features/auth/authSlice'
 import { setUsername } from '../features/user/userSlice'
 
 function Copyright(props) {
@@ -52,15 +52,24 @@ export default function SignIn() {
     })
     .then(function (response) {
       dispatch(setToken(response.data.accessToken))
+      dispatch(setRefreshToken(response.data.refreshToken))
     })
-    .then(() => {
+    .then((response) => {
       dispatch(setUsername(data.get('username')))
     })
     .then(() => {
       dispatch(signingIn())
     })
     .catch(function (error) {
-      setError("Incorrect username or password")
+      if (error.response) {
+        console.log(error.response.status)
+        console.log(error.response.data)
+        if (error.response.status < 500) {
+          setError("Incorrect username or password")
+        } else {
+          setError("Server unreachable at the moment")
+        }
+      }
       setSigninButton("Sign In")
       console.log(error)
     })

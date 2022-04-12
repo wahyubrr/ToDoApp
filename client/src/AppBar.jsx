@@ -16,23 +16,46 @@ import { userSelector, useDispatch, useSelector } from 'react-redux'
 import { signingIn, signingOut, setToken } from './features/auth/authSlice'
 import { setUsername, setFirstName } from './features/user/userSlice'
 import { Link } from "react-router-dom";
+import axios from 'axios'
 import "./AppBar.css";
 
 const pagesBlack = [
-  <Link key={"users1"} to="/users" className="nav-button-black">Users</Link>,
   <Link key={"about1"} to ="/about" className="nav-button-black">About</Link>
 ];
 const pagesWhite = [
-  <Link key={"users2"} to="/users" className="nav-button-white">Users</Link>,
   <Link key={"about2"} to ="/about" className="nav-button-white">About</Link>
 ];
-const settings = [
-  <Link key={"setting-account"} to ="/account" className="nav-button-black">Account</Link>
-  , 'Logout'];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  
+  const token = useSelector(state => state.auth.token)
+  const refreshToken = useSelector(state => state.auth.refreshToken)
+  const dispatch = useDispatch()
+
+  const logout = () => {
+    const request = {
+      data: {
+        "token": refreshToken
+      }
+    }
+    axios.delete("http://localhost:8081/logout", request)
+    .then(res => {
+      console.log(res.data)
+      dispatch(setUsername(""))
+      dispatch(setToken(""))
+      dispatch(signingOut())
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+  const settings = [
+    <Link key={"setting-account"} to ="/account" className="nav-button-black">Account</Link>,
+    <div onClick={logout}>Logout</div>
+  ];
 
   const username = useSelector(state => state.user.username)
 
@@ -61,7 +84,7 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-            <Link to="/" className="head-nav-button">To Do App!</Link>
+            <Link to="/" className="head-nav-button">To Do App</Link>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -106,7 +129,7 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
-            <Link to="/" className="head-nav-button">To Do App!</Link>
+            <Link to="/" className="head-nav-button">To Do App</Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pagesWhite.map((page, index) => (
@@ -119,6 +142,18 @@ const ResponsiveAppBar = () => {
               </Button>
             ))}
           </Box>
+
+          {/* <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+            {settings.map((setting, index) => (
+              <Button
+                key={"white-button-"+index}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {setting}
+              </Button>
+            ))}
+          </Box> */}
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
@@ -144,7 +179,7 @@ const ResponsiveAppBar = () => {
             >
               {settings.map((setting, index) => (
                 <MenuItem key={"setting-"+index} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                 {setting}
                 </MenuItem>
               ))}
             </Menu>

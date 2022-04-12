@@ -4,11 +4,15 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState: {
     token: "",
+    refreshToken:"",
     signed: false
   },
   reducers: {
     setToken: (state, action) => {
       state.token = action.payload
+    },
+    setRefreshToken: (state, action) => {
+      state.refreshToken = action.payload
     },
     signingIn: state => {
       state.signed = true
@@ -19,6 +23,6 @@ export const authSlice = createSlice({
   }
 })
 
-export const { signingIn, signingOut, setToken } = authSlice.actions
+export const { signingIn, signingOut, setToken, setRefreshToken } = authSlice.actions
 
 export default authSlice.reducer

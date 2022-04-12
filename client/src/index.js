@@ -6,7 +6,6 @@ import App from './App';
 import Home from './routes/home'
 import Login from './routes/login'
 import Registration from './routes/registration'
-import Users from './routes/users';
 import About from './routes/about';
 import Account from './routes/account'
 import reportWebVitals from './reportWebVitals';
@@ -19,7 +18,6 @@ ReactDOM.render(
       <Routes>
         <Route path='/' element={<App />}>
           <Route path='/' element={<Home />} />
-          <Route path='users' element={<Users />} />
           <Route path='about' element={<About />} />
           <Route path='account' element={<Account />} />
           <Route
