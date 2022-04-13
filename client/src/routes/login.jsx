@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Navigate, resolvePath } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,7 +16,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress'
 import axios from 'axios'
-import { userSelector, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { signingIn, setToken, setRefreshToken } from '../features/auth/authSlice'
 import { setUsername } from '../features/user/userSlice'
 
@@ -46,7 +46,7 @@ export default function SignIn() {
     setSigninButton(<CircularProgress color="inherit" size="1.55rem"/>)
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    axios.post('http://localhost:8081/login', {
+    axios.post(process.env.REACT_APP_AUTH_URL + '/login', {
       userid: data.get('username'),
       password: data.get('password')
     })

@@ -40,7 +40,7 @@ const ResponsiveAppBar = () => {
         "token": refreshToken
       }
     }
-    axios.delete("http://localhost:8081/logout", request)
+    axios.delete(process.env.REACT_APP_AUTH_URL + "/logout", request)
     .then(res => {
       console.log(res.data)
       dispatch(setUsername(""))

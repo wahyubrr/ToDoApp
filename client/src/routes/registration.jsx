@@ -6,8 +6,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -64,7 +62,7 @@ export default function SignUp() {
         userid: data.get('username'),
         password: data.get('password')
       }
-      axios.post("http://localhost:8081/registration", query)
+      axios.post(process.env.REACT_APP_AUTH_URL + "/registration", query)
       .then((response) => {
         setError(response.data)
         if (response.status === 201) {

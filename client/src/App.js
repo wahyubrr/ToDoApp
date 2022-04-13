@@ -9,7 +9,7 @@ import { signingIn, signingOut, setToken, setRefreshToken } from './features/aut
 export default function Home() {
   // const [loggedIn, setLoggedIn] = useState(true)
   const signed = useSelector(state => state.auth.signed)
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
 
   return (
     <div>

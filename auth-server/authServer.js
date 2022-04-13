@@ -39,7 +39,7 @@ app.post('/token', async (req, res) => {
     const refreshToken = req.body.token
     if(refreshToken == null) return res.sendStatus(401)
 
-    let query = "SELECT EXISTS(SELECT refreshtoken FROM refreshtokentable WHERE refreshtoken='" + refreshToken + "') AS refreshTokenExist"
+    let query = "SELECT EXISTS(SELECT refreshtoken FROM RefreshTokenTable WHERE refreshtoken='" + refreshToken + "') AS refreshTokenExist"
     const refreshTokenExist = await queryDatabase(query)
     if (!refreshTokenExist[0].refreshTokenExist) return res.sendStatus(403)
     
@@ -59,7 +59,7 @@ app.post('/registration', async (req, res) => {
   // Crete user with hashed password by bcrypt
   try {
     const userid = req.body.userid.toLowerCase()
-    let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
+    let query = "SELECT EXISTS(SELECT userid FROM Users WHERE userid='" +
       userid + "') AS useridAvailable"
     const useridAvailable = await queryDatabase(query)
     // console.log(useridAvailable[0].useridAvailable)
@@ -67,7 +67,7 @@ app.post('/registration', async (req, res) => {
       return res.status(401).send("UserID is taken")
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    query = "INSERT INTO users ( userid, lastname, firstname, password ) " +
+    query = "INSERT INTO Users ( userid, lastname, firstname, password ) " +
       "VALUES ( '" + userid + "', '" +
       req.body.lastname + "', '" +
       req.body.firstname + "', '" +
@@ -87,7 +87,7 @@ app.post('/registration', async (req, res) => {
 app.post('/login', async (req, res) => {
   // Authenticate User with hashed password by bcrypt
   try {
-    let query = "SELECT userid, password FROM users WHERE userid='" + req.body.userid + "'"
+    let query = "SELECT userid, password FROM Users WHERE userid='" + req.body.userid + "'"
     let result = await queryDatabase(query)
     if (result[0] == null) {
       return res.status(401).send("User not found")
@@ -96,10 +96,10 @@ app.post('/login', async (req, res) => {
       const accessToken = generateAccessToken(req.body.userid)
       const refreshToken = jwt.sign(req.body.userid, process.env.REFRESH_TOKEN_SECRET)
 
-      let query = "SELECT EXISTS (SELECT refreshtoken FROM  refreshtokentable WHERE refreshtoken='" + refreshToken + "') AS refreshTokenExist"
+      let query = "SELECT EXISTS (SELECT refreshtoken FROM  RefreshTokenTable WHERE refreshtoken='" + refreshToken + "') AS refreshTokenExist"
       const refreshTokenExist = await queryDatabase(query)
       if (!refreshTokenExist[0].refreshTokenExist) {
-        query = "INSERT INTO refreshtokentable (refreshtoken) VALUES ('" +
+        query = "INSERT INTO RefreshTokenTable (refreshtoken) VALUES ('" +
         refreshToken + "')"
         await queryDatabase(query)
       }
@@ -119,7 +119,7 @@ app.post('/login', async (req, res) => {
 
 app.delete('/logout', async (req, res) => {
   try {
-    const query = "DELETE FROM refreshtokentable WHERE refreshtoken='" + req.body.token + "'"
+    const query = "DELETE FROM RefreshTokenTable WHERE refreshtoken='" + req.body.token + "'"
     await queryDatabase(query)
     res.sendStatus(200)
   }

@@ -1,11 +1,15 @@
-FROM node:16-alpine
+# FROM node:16-alpine
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY package*.json /app
+# COPY package*.json /app
 
-RUN npm install
+# RUN npm install
 
-COPY . /app
+# COPY . /app
 
-CMD [ "npm", "start" ]
+# CMD [ "npm", "start" ]
+
+FROM nginx
+COPY build /usr/share/nginx/html
+EXPOSE 8080

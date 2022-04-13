@@ -10,19 +10,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import { alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
-import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { userSelector, useDispatch, useSelector } from 'react-redux'
-import { signingIn, signingOut, setToken } from '../features/auth/authSlice'
+import { useSelector } from 'react-redux'
+// import { useDispatch } from 'react-redux'
 
-function generate(element) {
+function generate(element) { //delete
   return [0, 1, 2].map((value) =>
     React.cloneElement(element, {
       key: value,
@@ -41,10 +38,10 @@ function Home() {
   const [updateState, setUpdate] = useState(false)
   
   const token = useSelector(state => state.auth.token)
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
 
   useEffect(() => {
-    axios.get("http://localhost:8080/todo", {
+    axios.get(process.env.REACT_APP_API_URL + "/todo", {
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer " + token
@@ -64,7 +61,7 @@ function Home() {
   }
 
   const updateUi = () => {
-    if (updateState == true) {
+    if (updateState === true) {
       setUpdate(false)
     } else {
       setUpdate(true)
@@ -83,7 +80,7 @@ function Home() {
       "completed": "0"
     }
     if (description) {
-      axios.post("http://localhost:8080/todo/add", body, auth)
+      axios.post(process.env.REACT_APP_API_URL + "/todo/add", body, auth)
       .then(res => {
         console.log(res.data)
         setDescription("")
@@ -94,7 +91,7 @@ function Home() {
       })
     }
     else {
-      if (placeholder == "Add todo here") {
+      if (placeholder === "Add todo here") {
         setPlaceholder("Add todo first")
       } else {
         setPlaceholder("Add todo here")
@@ -112,7 +109,7 @@ function Home() {
         "todoid": todoid
       }
     }
-    axios.delete("http://localhost:8080/todo/delete", request)
+    axios.delete(process.env.REACT_APP_API_URL + "/todo/delete", request)
     .then(res => {
       console.log(res.data)
       updateUi()
@@ -125,7 +122,7 @@ function Home() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} md={5} >
+        <Grid item xs={11} md={5} >
           <Typography sx={{ mt: 4, mb: 2 }} variant="h5" component="div">
             Home
           </Typography>

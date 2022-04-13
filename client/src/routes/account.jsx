@@ -13,9 +13,9 @@ import Paper from '@mui/material/Paper'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from '@mui/material/Button'
-import { userSelector, useDispatch, useSelector } from 'react-redux'
-import { signingIn, signingOut, setToken } from '../features/auth/authSlice'
-import { setUsername, setFirstName } from '../features/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { signingOut, setToken } from '../features/auth/authSlice'
+import { setUsername } from '../features/user/userSlice'
 
 function Account() {
   const [users, setUsers] = useState([{
@@ -32,7 +32,7 @@ function Account() {
   }));
 
   useEffect(() => {
-    axios.get("http://localhost:8080/user/" + userState)
+    axios.get(process.env.REACT_APP_API_URL + "/user/" + userState)
       .then(res => {
         // console.log(users) // DEBUGGING
         setUsers(res.data)
@@ -41,7 +41,7 @@ function Account() {
 
   const deleteAccount = () => {
     alert("Account deleted")
-    axios.delete("http://localhost:8080/user/delete", {
+    axios.delete(process.env.REACT_APP_API_URL + "/user/delete", {
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer " + token,
@@ -60,7 +60,7 @@ function Account() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} md={5} >
+        <Grid item xs={11} md={5} >
           <Typography sx={{ mt: 4, mb: 2 }} variant="h5" component="div">
             Account
           </Typography>

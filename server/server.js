@@ -49,7 +49,7 @@ function authenticateToken(req, res, next) {
 }
 
 app.get('/user', (req, res) => {
-  queryDatabase("SELECT * FROM users")
+  queryDatabase("SELECT * FROM Users")
     .then(
       result => res.send(result)
     )
@@ -59,7 +59,7 @@ app.get('/user', (req, res) => {
 })
 
 app.get('/user/:userid', (req, res) => {
-  queryDatabase("SELECT * FROM users WHERE userid=" + mysql.escape(req.params.userid))
+  queryDatabase("SELECT * FROM Users WHERE userid=" + mysql.escape(req.params.userid))
     .then(
       result => {
         if(result[0] == null) res.status(404).send(result)
@@ -73,15 +73,15 @@ app.get('/user/:userid', (req, res) => {
 
 app.delete('/user/delete', authenticateToken, async (req, res) => {
   try {
-    let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
+    let query = "SELECT EXISTS(SELECT userid FROM Users WHERE userid='" +
       req.user + "') AS useridExist"
     const useridOnDatabase = await queryDatabase(query)
     
     if (useridOnDatabase[0].useridExist) {
-      query = "DELETE FROM todolist WHERE userid='" + req.user + "'"
+      query = "DELETE FROM TodoList WHERE userid='" + req.user + "'"
       await queryDatabase(query)
 
-      query = "DELETE FROM users WHERE userid='" + req.user + "'"
+      query = "DELETE FROM Users WHERE userid='" + req.user + "'"
       await queryDatabase(query)
 
       res.status(200).send("Successfully deleted list for user " + req.user)
@@ -97,12 +97,12 @@ app.delete('/user/delete', authenticateToken, async (req, res) => {
 
 app.get('/todo', authenticateToken, async (req, res) => {
   try {
-    let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
+    let query = "SELECT EXISTS(SELECT userid FROM Users WHERE userid='" +
       req.user + "') AS useridExist"
     const useridOnDatabase = await queryDatabase(query)
     
     if (useridOnDatabase[0].useridExist) {
-      query = "SELECT * FROM todolist WHERE userid='" + req.user + "'"
+      query = "SELECT * FROM TodoList WHERE userid='" + req.user + "'"
       const queriedData = await queryDatabase(query)
       res.status(200).send(queriedData)
     }
@@ -117,13 +117,13 @@ app.get('/todo', authenticateToken, async (req, res) => {
 
 app.post('/todo/add', authenticateToken, async (req, res) => {
   try {
-    let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
+    let query = "SELECT EXISTS(SELECT userid FROM Users WHERE userid='" +
       req.user + "') AS useridExist"
     const useridOnDatabase = await queryDatabase(query)
     
     if (useridOnDatabase[0].useridExist) {
       const today = new Date().toISOString().slice(0, 10)
-      query = "INSERT INTO todolist " +
+      query = "INSERT INTO TodoList " +
       "( userid, dateassigned, descriptions, completed ) " +
       "VALUES('" + req.user + "', '" + today + "', " + mysql.escape(req.body.descriptions) + 
       ", " + mysql.escape(req.body.completed) + ")"
@@ -141,13 +141,13 @@ app.post('/todo/add', authenticateToken, async (req, res) => {
 
 app.delete('/todo/delete', authenticateToken, async (req, res) => {
   try {
-    let query = "SELECT EXISTS(SELECT userid FROM users WHERE userid='" +
+    let query = "SELECT EXISTS(SELECT userid FROM Users WHERE userid='" +
       req.user + "') AS useridExist"
     const useridOnDatabase = await queryDatabase(query)
     // Need to check the username == token
     // Welppp it's not working yet lul
     if (useridOnDatabase[0].useridExist) {
-      query = "DELETE FROM todolist WHERE todoid='" + mysql.escape(req.body.todoid) + "'"
+      query = "DELETE FROM TodoList WHERE todoid='" + mysql.escape(req.body.todoid) + "'"
       await queryDatabase(query)
       res.sendStatus(200)
     }
