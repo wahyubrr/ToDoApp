@@ -69,15 +69,15 @@ function Account() {
               <Paper elevation={1}>
                 <ListItem key={"todo-"+users[0].UserId}
                   style={{ marginBottom: 5 }}
-                  // secondaryAction={
-                  //   <div>
-                  //   <IconButton edge="end" aria-label="edit"
-                  //       // onClick={() => handleDelete(todo.TodoId)}
-                  //   >
-                  //     <EditIcon />
-                  //   </IconButton>
-                  //   </div>
-                  // }
+                  secondaryAction={
+                    <div>
+                    <IconButton edge="end" aria-label="edit"
+                        // onClick={() => handleDelete(todo.TodoId)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    </div>
+                  }
                 >
                 <ListItemText
                   primary={"Username: "+users[0].UserId}
@@ -87,15 +87,15 @@ function Account() {
               <Paper elevation={1}>
                 <ListItem key={"todo-"+users[0].UserId}
                   style={{ marginBottom: 5 }}
-                  // secondaryAction={
-                  //   <div>
-                  //   <IconButton edge="end" aria-label="edit"
-                  //       // onClick={() => handleDelete(todo.TodoId)}
-                  //   >
-                  //     <EditIcon />
-                  //   </IconButton>
-                  //   </div>
-                  // }
+                  secondaryAction={
+                    <div>
+                    <IconButton edge="end" aria-label="edit"
+                        // onClick={() => handleDelete(todo.TodoId)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    </div>
+                  }
                 >
                 <ListItemText
                   primary={"First Name: "+users[0].FirstName}
@@ -105,15 +105,15 @@ function Account() {
               <Paper elevation={1}>
                 <ListItem key={"todo-"+users[0].UserId}
                   style={{ marginBottom: 5 }}
-                  // secondaryAction={
-                  //   <div>
-                  //   <IconButton edge="end" aria-label="edit"
-                  //       // onClick={() => handleDelete(todo.TodoId)}
-                  //   >
-                  //     <EditIcon />
-                  //   </IconButton>
-                  //   </div>
-                  // }
+                  secondaryAction={
+                    <div>
+                    <IconButton edge="end" aria-label="edit"
+                        // onClick={() => handleDelete(todo.TodoId)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    </div>
+                  }
                 >
                 <ListItemText
                   primary={"Last Name: "+users[0].LastName}
