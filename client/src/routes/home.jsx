@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import BlockIcon from '@mui/icons-material/Block'
 
 import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
@@ -36,6 +37,8 @@ function Home() {
   const [description, setDescription] = useState("")
   const [placeholder, setPlaceholder] = useState("Add todo here")
   const [updateState, setUpdate] = useState(false)
+  const [editingTodo, setEditingTodo] = useState(false)
+  const [todoId, setTodoId] = useState(0)
   
   const token = useSelector(state => state.auth.token)
   // const dispatch = useDispatch()
@@ -68,7 +71,63 @@ function Home() {
     }
   }
 
-  const handleAddTodo = () => {
+  const handleTodoPost = () => {
+    const auth = {
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer " + token
+      }
+    }
+    if (editingTodo === false) { // POST to /todo/add
+      const body = {
+        "descriptions": description,
+        "completed": "0"
+      }
+      if (description) {
+        axios.post(process.env.REACT_APP_API_URL + "/todo/add", body, auth)
+        .then(res => {
+          console.log(res.data)
+          setDescription("")
+          updateUi()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+      else {
+        if (placeholder === "Add todos here") {
+          setPlaceholder("Add todos first")
+        } else {
+          setPlaceholder("Add todos here")
+        }
+      }
+    } else if (editingTodo === true) {  // POST to /todo/edit
+      const body = {
+        "descriptions": description,
+        "todoid": todoId
+      }
+      if (description) {
+        axios.post(process.env.REACT_APP_API_URL + "/todo/edit", body, auth)
+        .then(res => {
+          setDescription("")
+          updateUi()
+          handleCancel()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+      else {
+        if (placeholder === "Edit todos here") {
+          setPlaceholder("Edit todos first")
+        } else {
+          setPlaceholder("Edit todos here")
+        }
+      }
+    }
+  }
+
+  const handleUpdate = (todoid) => {
     const auth = {
       headers: {
         "content-type": "application/json",
@@ -77,28 +136,67 @@ function Home() {
     }
     const body = {
       "descriptions": description,
-      "completed": "0"
+      "TodoId": todoid
     }
-    if (description) {
-      axios.post(process.env.REACT_APP_API_URL + "/todo/add", body, auth)
-      .then(res => {
-        console.log(res.data)
-        setDescription("")
-        updateUi()
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    if (todoid === todoId) {
+      handleCancel()
+    } else {
+      setEditingTodo(true)
+      setTodoId(todoid)
     }
-    else {
-      if (placeholder === "Add todo here") {
-        setPlaceholder("Add todo first")
-      } else {
-        setPlaceholder("Add todo here")
-      }
-    }
+    
+    // if (description) {
+    //   axios.post(process.env.REACT_APP_API_URL + "/todo/edit", body, auth)
+    //   .then(res => {
+    //     console.log(res.data)
+    //     setDescription("")
+    //     updateUi()
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+    // }
+    // else {
+    //   if (placeholder === "Add todo here") {
+    //     setPlaceholder("Add todo first")
+    //   } else {
+    //     setPlaceholder("Add todo here")
+    //   }
+    // }
   }
   
+  const handleEditIconChange = (todoid) => {
+    if (todoid === todoId) {
+      if (editingTodo === true) {
+        return <BlockIcon/>
+      } else {
+        <EditIcon />
+      }
+    } else {
+      return <EditIcon />
+    }
+  }
+
+  const handleCancel = () => {
+    setEditingTodo(false)
+    setTodoId(0)
+  }
+
+  const displayCancelEditButton = () => {
+    if (editingTodo === true) {
+      return (<Button
+        id="descriptions"
+        value='add'
+        variant="contained"
+        color="error"
+        onClick={handleCancel}
+        style={{ marginTop: 11, marginLeft: 16 }}
+      >
+        Cancel
+      </Button>)
+    }
+  }
+
   const handleDelete = (todoid) => {
     const request = {
       headers: {
@@ -135,11 +233,11 @@ function Home() {
                     style={{ marginBottom: 5 }}
                     secondaryAction={
                       <div>
-                      {/* <IconButton edge="end" aria-label="edit"
-                        // onClick={() => handleDelete(todo.TodoId)}
+                      <IconButton edge="end" aria-label="edit"
+                        onClick={() => handleUpdate(todo.TodoId)}
                       >
-                        <EditIcon />
-                      </IconButton> */}
+                        {handleEditIconChange(todo.TodoId)}
+                      </IconButton>
                       <IconButton edge="end" aria-label="delete"
                         onClick={() => handleDelete(todo.TodoId)}
                       >
@@ -157,7 +255,7 @@ function Home() {
               })}
             </List>
             <RedditTextField
-              label="Add todos here"
+              label={editingTodo ? "Edit todos here" : "Add todos here"}
               id="descriptions"
               variant="filled"
               fullWidth
@@ -165,17 +263,18 @@ function Home() {
               placeholder={placeholder}
               style={{ marginTop: 11, marginLeft: 16, maxWidth: '85%' }}
               onChange={(e) => handleTodoChange(e)}
-              onSubmit={handleAddTodo}
+              onSubmit={handleTodoPost}
             />
             <Button
               id="descriptions"
               value='add'
               variant="contained"
-              onClick={handleAddTodo}
+              onClick={handleTodoPost}
               style={{ marginTop: 11, marginLeft: 16 }}
             >
-              Add Todo
+              {editingTodo ? "Edit Todo" : "Add Todo"}
             </Button>
+            {displayCancelEditButton()}
           </Demo>
         </Grid>
       </Grid>
