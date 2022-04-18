@@ -139,6 +139,26 @@ app.post('/todo/add', authenticateToken, async (req, res) => {
   }
 })
 
+app.post('/todo/edit', authenticateToken, async (req, res) => {
+  try {
+    let query = "SELECT EXISTS(SELECT userid FROM Users WHERE userid='" +
+      req.user + "') AS useridExist"
+    const useridOnDatabase = await queryDatabase(query)
+    
+    if (useridOnDatabase[0].useridExist) {
+      query = "UPDATE TodoList SET Descriptions=" + mysql.escape(req.body.descriptions) + " WHERE TodoId=" + mysql.escape(req.body.todoid) + ";"
+      await queryDatabase(query)
+      res.sendStatus(200)
+    }
+    else {
+      res.sendStatus(403)
+    }
+  }
+  catch {
+    res.sendStatus(500)
+  }
+})
+
 app.delete('/todo/delete', authenticateToken, async (req, res) => {
   try {
     let query = "SELECT EXISTS(SELECT userid FROM Users WHERE userid='" +
