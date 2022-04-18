@@ -135,11 +135,12 @@ function Home() {
                     style={{ marginBottom: 5 }}
                     secondaryAction={
                       <div>
-                      <IconButton edge="end" aria-label="edit"
+                      {/* <IconButton edge="end" aria-label="edit"
                         // onClick={() => handleDelete(todo.TodoId)}
                       >
                         <EditIcon />
-                      </IconButton><IconButton edge="end" aria-label="delete"
+                      </IconButton> */}
+                      <IconButton edge="end" aria-label="delete"
                         onClick={() => handleDelete(todo.TodoId)}
                       >
                         <DeleteIcon />
