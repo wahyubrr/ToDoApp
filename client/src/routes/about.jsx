@@ -12,6 +12,7 @@ import GithubIcon from '@mui/icons-material/GitHub';
 import PhoneIcon from '@mui/icons-material/Phone';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 
 export default function SelectedListItem() {
   // let navigate = useNavigate()
@@ -31,79 +32,12 @@ export default function SelectedListItem() {
             About
           </Typography>
           <Demo>
-          <List component="nav" aria-label="main mailbox folders">
-        <ListItemButton
-          // onClick={}
-        >
-          <ListItemIcon>
-            <PersonIcon />
-          </ListItemIcon>
-          <ListItemText primary="Wahyu Berlianto" />
-        </ListItemButton>
-        <ListItemButton
-          // onClick={}
-        >
-          <ListItemIcon>
-            <MailsIcon />
-          </ListItemIcon>
-          <ListItemText primary="wahyubrlianto@gmail.com" />
-        </ListItemButton>
-        <ListItemButton
-          // onClick={routeGithub}
-        >
-          <ListItemIcon>
-            <GithubIcon />
-          </ListItemIcon>
-          <ListItemText primary="wahyubrr" />
-        </ListItemButton>
-        <ListItemButton
-          // onClick={}
-        >
-          <ListItemIcon>
-            <PhoneIcon />
-          </ListItemIcon>
-          <ListItemText primary="0813-2944-3896" />
-        </ListItemButton>
-      </List>
+          <Typography sx={{ mt: 4, mb: 2, fontSize: '1.2em' }} variant="p" component="div">
+            ToDo App is a web application to help you list all your important tasks in one single place. This application is made by <a href='https://github.com/wahyubrr' target='_blank'>wahyubrr</a> on GitHub.
+          </Typography>
           </Demo>
         </Grid>
       </Grid>
     </Box>
-    // <Box sx={{ marginTop: 1, width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-    //   <List component="nav" aria-label="main mailbox folders">
-    //     <ListItemButton
-    //       // onClick={}
-    //     >
-    //       <ListItemIcon>
-    //         <PersonIcon />
-    //       </ListItemIcon>
-    //       <ListItemText primary="Wahyu Berlianto" />
-    //     </ListItemButton>
-    //     <ListItemButton
-    //       // onClick={}
-    //     >
-    //       <ListItemIcon>
-    //         <MailsIcon />
-    //       </ListItemIcon>
-    //       <ListItemText primary="wahyubrlianto@gmail.com" />
-    //     </ListItemButton>
-    //     <ListItemButton
-    //       // onClick={routeGithub}
-    //     >
-    //       <ListItemIcon>
-    //         <GithubIcon />
-    //       </ListItemIcon>
-    //       <ListItemText primary="wahyubrr" />
-    //     </ListItemButton>
-    //     <ListItemButton
-    //       // onClick={}
-    //     >
-    //       <ListItemIcon>
-    //         <PhoneIcon />
-    //       </ListItemIcon>
-    //       <ListItemText primary="0813-2944-3896" />
-    //     </ListItemButton>
-    //   </List>
-    // </Box>
   );
 }
